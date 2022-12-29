@@ -12,12 +12,12 @@ And now you're good to go..
 
 Index Page:
 
-<img src="Images/Index.png" alt="Index Page" title="Index Page" style="width:500px !important;height:1075px !important;">
+<img src="Images/Index.png" alt="Index Page" title="Index Page" style="width:300px !important;height:645px !important;">
 
 Followers Page:
 
-<img src="Images/Followers.png" alt="Followers Page" title="Followers Page" style="width:500px !important;height:1075px !important;">
+<img src="Images/Followers.png" alt="Followers Page" title="Followers Page" style="width:300px !important;height:645px !important;">
 
 Following Page:
 
-<img src="Images/Following.png" alt="Followings Page" title="Following Page" style="width:500px !important;height:1075px !important;">
+<img src="Images/Following.png" alt="Followings Page" title="Following Page" style="width:300px !important;height:645px !important;">
