@@ -25,7 +25,7 @@ class MAViewController: UIViewController {
     
     // MARK: - Lifecycle
     deinit {
-        log("💥 \(className)")
+        log("✨ \(className)")
     }
     
     override func viewDidLoad() {

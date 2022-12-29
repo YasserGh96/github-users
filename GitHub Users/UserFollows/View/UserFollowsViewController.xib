@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UserFollowsViewController" customModule="GitHub_Users" customModuleProvider="target">
             <connections>
+                <outlet property="noDataLabel" destination="Lp0-fE-rgp" id="cxL-3m-5Fl"/>
                 <outlet property="tableView" destination="0S2-Ot-6lf" id="YWR-ir-JFl"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -23,6 +24,12 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Zi-xb-DmW">
                     <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                     <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lp0-fE-rgp">
+                            <rect key="frame" x="207" y="409" width="0.0" height="0.0"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="0S2-Ot-6lf">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="818"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -31,8 +38,12 @@
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="0S2-Ot-6lf" firstAttribute="top" secondItem="6Zi-xb-DmW" secondAttribute="top" id="0aB-bf-IxZ"/>
+                        <constraint firstItem="Lp0-fE-rgp" firstAttribute="centerY" secondItem="6Zi-xb-DmW" secondAttribute="centerY" id="6dx-NI-Ila"/>
+                        <constraint firstAttribute="trailing" secondItem="Lp0-fE-rgp" secondAttribute="trailing" constant="25" id="A8b-wa-6UW"/>
                         <constraint firstAttribute="bottom" secondItem="0S2-Ot-6lf" secondAttribute="bottom" id="GCk-jI-ek3"/>
+                        <constraint firstItem="Lp0-fE-rgp" firstAttribute="leading" secondItem="6Zi-xb-DmW" secondAttribute="leading" constant="25" id="IWg-sX-5AO"/>
                         <constraint firstAttribute="trailing" secondItem="0S2-Ot-6lf" secondAttribute="trailing" id="YGr-Jl-U3S"/>
+                        <constraint firstItem="Lp0-fE-rgp" firstAttribute="centerX" secondItem="6Zi-xb-DmW" secondAttribute="centerX" id="dYi-zD-sZh"/>
                         <constraint firstItem="0S2-Ot-6lf" firstAttribute="leading" secondItem="6Zi-xb-DmW" secondAttribute="leading" id="oOU-B5-VZG"/>
                     </constraints>
                 </view>

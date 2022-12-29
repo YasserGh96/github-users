@@ -45,7 +45,7 @@ extension NetworkRequest {
     
     // MARK: - Follwers/Following
     func followers(name: String, pageNumber: String, _ completion: @escaping ResultClosure) {
-        let url = Endpoint.baseURL + Endpoint.followers.rawValue
+        let url = endpoint(.followers, resource: name)
         var queryURL = URLComponents(string: url)
 
         let pageItem = URLQueryItem(name: "page", value: pageNumber)
@@ -53,21 +53,41 @@ extension NetworkRequest {
         
         queryURL?.queryItems = [pageItem, perPageItem]
         
-       // guard let endpointURL: URLConvertible = queryURL else {return}
+        guard let endpointURL: URLConvertible = queryURL else {return}
         
-        request(endpoint: endpoint(.followers, resource: name), method: .get) { result in
+        request(endpoint: endpointURL, method: .get) { result in
             
             var users: [UserModel] = []
-            var total_count: Int = -1
             
-            if let objects = result.object["items"] as? [JSON] {
-                users = objects.map { UserModel($0) }
-            }
+             let user = result.objects
+                users = user.map { UserModel($0) }
             
-            total_count = result.object["total_count"] as? Int ?? -1
             
-            let searchResult = SearchResultsModel(total_count: total_count, users: users)
-            result.data = searchResult
+            result.data = users
+            
+            completion(result)
+        }
+    }
+    
+    func following(name: String, pageNumber: String, _ completion: @escaping ResultClosure) {
+        let url = endpoint(.following, resource: name)
+        var queryURL = URLComponents(string: url)
+
+        let pageItem = URLQueryItem(name: "page", value: pageNumber)
+        let perPageItem = URLQueryItem(name: "per_page", value: "10")
+        
+        queryURL?.queryItems = [pageItem, perPageItem]
+        
+        guard let endpointURL: URLConvertible = queryURL else {return}
+        
+        request(endpoint: endpointURL, method: .get) { result in
+            
+            var users: [UserModel] = []
+            
+             let user = result.objects
+                users = user.map { UserModel($0) }
+
+            result.data = users
             
             completion(result)
         }

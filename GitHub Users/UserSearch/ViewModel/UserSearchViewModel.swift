@@ -16,6 +16,8 @@ final class UserSearchViewModel {
     let users = PublishSubject<[UserModel]>()
     var indicatorLoader = BehaviorRelay<Bool>(value: true)
     var tableFooterViewLoader = BehaviorRelay<Bool>(value: false)
+    var tableViewHide = BehaviorRelay<Bool>(value: false)
+    var noUsersLabelHide = BehaviorRelay<Bool>(value: true)
     var usersObservable: Observable<[UserModel]> {
         return self.users.asObservable()
     }
@@ -29,12 +31,18 @@ final class UserSearchViewModel {
         
     // MARK: - Methods
     func getUsers(name: String) {
+        isPagination = name == userName
         isPagination ? tableFooterViewLoader.accept(true) : indicatorLoader.accept(false)
         page = userName == name ? page + 1 : 1
         api.searchUsers(name: name, pageNumber: String(page)) { [weak self] result in
             guard let strongSelf = self else { return }
+            
             strongSelf.indicatorLoader.accept(true)
             strongSelf.tableFooterViewLoader.accept(false)
+            
+            strongSelf.noUsersLabelHide.accept(true)
+            strongSelf.tableViewHide.accept(false)
+            
             if result.success {
                 if let data = result.data as? SearchResultsModel {
                     
@@ -52,6 +60,9 @@ final class UserSearchViewModel {
                     } else {
                         strongSelf.isPagination = true
                     }
+                    
+                    strongSelf.tableViewHide.accept(strongSelf.usersData.isEmpty)
+                    strongSelf.noUsersLabelHide.accept(!strongSelf.usersData.isEmpty)
                     
                     strongSelf.users.onNext(strongSelf.usersData)
                 }

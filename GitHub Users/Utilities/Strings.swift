@@ -21,6 +21,7 @@ extension String {
     static let followers = "Followers"
     static let following = "Following"
     static let searchUsers = "Search Users"
-    
+	static let searchBarPlaceHolder = "Search Github"
+    static let noUsersAvailable = "No Users Available"
     
 }

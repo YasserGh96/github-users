@@ -11,18 +11,20 @@ import RxSwift
 final class UserFollowsViewController: MAViewController {
     
     // MARK: - Outlets
+    @IBOutlet private weak var noDataLabel: UILabel!
     @IBOutlet private weak var tableView: UITableView!
     
     // MARK: - Properties
     private var name: String = ""
+    private var type: String = ""
     private var userFollowsViewModel = UserFollowsViewModel()
-    var disposeBag: DisposeBag = DisposeBag()
-    var isFirst: Bool = true
+    private var disposeBag: DisposeBag = DisposeBag()
     
     // MARK: - Init
-    required init(name: String) {
+    required init(name: String, type: String) {
         super.init(nibName: UserFollowsViewController.name, bundle: nil)
         self.name = name
+        self.type = type
     }
     
     required init?(coder: NSCoder) {
@@ -32,13 +34,18 @@ final class UserFollowsViewController: MAViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        userFollowsViewModel.getFollowers(name: name)
+        if type == .followers {
+            userFollowsViewModel.getFollowers(name: name)
+        } else {
+            userFollowsViewModel.getFollowing(name: name)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupTableView()
         setupUI()
+        bindComponents()
         bindTableView()
         bindSpinner()
     }
@@ -46,7 +53,11 @@ final class UserFollowsViewController: MAViewController {
     // MARK: - Methods
     private func setupUI() {
         setBackButton()
-        set(title: .following)
+        set(title: type)
+        
+		noDataLabel.set(text: .noUsersAvailable, color: .gray, font: .bold(30))
+        noDataLabel.textAlignment = .center
+        noDataLabel.isHidden = true
     }
     
     private func setupTableView() {
@@ -61,24 +72,21 @@ final class UserFollowsViewController: MAViewController {
         tableView.register(cell: UserTableViewCell.self)
         userFollowsViewModel.users.bind(to: tableView.rx.items(cellIdentifier: UserTableViewCell.name, cellType: UserTableViewCell.self)) { (row,item,cell) in
             cell.user = item
-            cell.set()
+            cell.set(hide: true)
         }.disposed(by: disposeBag)
     }
     
-    //    private func bindTableViewPagination() {
-    //        tableView.rx.didScroll.subscribe { [weak self] _ in
-    //            guard let strongSelf = self else { return }
-    //            let offSetY = strongSelf.tableView.contentOffset.y
-    //            let contentHeight = strongSelf.tableView.contentSize.height
-    //            print("contentHeight is \(contentHeight)")
-    //            print("strongSelf.tableView.frame.size.height is \(strongSelf.tableView.frame.height)")
-    //            print(offSetY)
-    //            if offSetY > (contentHeight - strongSelf.tableView.frame.height - 50) {
-    //                self?.userSearchViewModel.getUsers(name: self?.userSearchBar.text ?? "", pageNumber: "2")
-    //            }
-    //
-    //        }.disposed(by: disposeBag)
-    //    }
+    private func bindComponents() {
+        userFollowsViewModel.tableViewHide.asObservable()
+            .observe(on: MainScheduler.instance)
+            .bind(to: tableView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        userFollowsViewModel.noUsersLabelHide.asObservable()
+            .observe(on: MainScheduler.instance)
+            .bind(to: noDataLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+    }
     
     private func bindSpinner() {
         let spinner = spin()
@@ -98,14 +106,6 @@ final class UserFollowsViewController: MAViewController {
             .bind(to: footerSpinner.rx.isAnimating)
             .disposed(by: disposeBag)
     }
-    
-    //    private func bind() {
-    //        userSearchViewModel.refreshControlCompelted.subscribe { [weak self] _ in
-    //                    guard let self = self else { return }
-    //                    self.refreshControl.endRefreshing()
-    //                }.disposed(by: disposeBag)
-    //    }
-    
 }
 
 // MARK: - Search Bar Delegate
@@ -114,11 +114,13 @@ extension UserFollowsViewController:  UITableViewDelegate {
         let lastSectionIndex = tableView.numberOfSections - 1
         let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
         if indexPath.section ==  lastSectionIndex && indexPath.row == lastRowIndex && indexPath.row != 0 {
-            if userFollowsViewModel.isPagination && !isFirst {
-                userFollowsViewModel.getFollowers(name: name)
-            } else {
-                isFirst = false
-            }
+            if userFollowsViewModel.isPagination {
+                if type == .followers {
+                    userFollowsViewModel.getFollowers(name: name)
+                } else {
+                    userFollowsViewModel.getFollowing(name: name)
+                }
+            } 
         }
     }
 }

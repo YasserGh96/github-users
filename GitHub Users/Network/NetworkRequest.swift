@@ -46,7 +46,8 @@ class NetworkRequest: NSObject {
         }
     }
     
-    func endpoint(_ endpoint: Endpoint, resource: String) -> URLConvertible
+    func endpoint(_ endpoint: Endpoint, resource: String) -> String
+    
        {
            let fullURLString = Endpoint.baseURL + String(format: endpoint.rawValue, resource)
                
@@ -57,9 +58,9 @@ class NetworkRequest: NSObject {
                                   
                    //guard let endpointURL: URLConvertible = queryURL else {return}
                print(fullURLString)
-               return regex.stringByReplacingMatches(in: fullURLString, options: [], range: range, withTemplate: "") as URLConvertible
+               return regex.stringByReplacingMatches(in: fullURLString, options: [], range: range, withTemplate: "") as String
            } catch {
-               return fullURLString as URLConvertible
+               return fullURLString as String
            }
        }
     

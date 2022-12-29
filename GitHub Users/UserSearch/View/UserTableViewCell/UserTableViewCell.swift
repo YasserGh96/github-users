@@ -20,7 +20,10 @@ final class UserTableViewCell: MATableViewCell {
     @IBOutlet private weak var buttonsStackView: UIStackView!
     
     // MARK: - Properties
+    private var hide: Bool = false
     var user = UserModel()
+    var cellBag: DisposeBag = DisposeBag()
+
     var followersTap: Observable<Void> {
         return followersButton.bindTap()
     }
@@ -28,7 +31,6 @@ final class UserTableViewCell: MATableViewCell {
     var followingTap: Observable<Void> {
         return FollowingButton.bindTap()
     }
-    var cellBag: DisposeBag = DisposeBag()
     
     // MARK: - Init
     override func awakeFromNib() {
@@ -49,14 +51,19 @@ final class UserTableViewCell: MATableViewCell {
         boxView.addBorder(radius: 15, width: 1, color: .border_medium_grey)
         avatarView.addBorder(radius: 10, width: 1, color: .border_medium_grey)
         
+        nameLabel.numberOfLines = 2
+        
+        buttonsStackView.isHidden = hide
     }
     
-    func set() {
+    func set(hide: Bool = false) {
         avatar.get(with: user.avatar_url)
         
         nameLabel.set(text: user.login, color: .black, font: .semibold(16))
         
         followersButton.set(filledBlue: .followers)
         FollowingButton.set(filledBlue: .following)
+        
+        buttonsStackView.isHidden = hide
     }
 }
