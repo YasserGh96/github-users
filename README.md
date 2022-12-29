@@ -10,8 +10,8 @@ This tool helping you to get Github users informations and dump their followers 
 ```
 And now you're good to go..
 
-<img src="Images/Index.png" alt="Index Page" title="Index Page">
+<img src="Images/Index.png" alt="Index Page" title="Index Page" style="max-width: 75%;">
 
-<img src="Images/Followers.png" alt="Followers Page" title="Followers Page">
+<img src="Images/Followers.png" alt="Followers Page" title="Followers Page" style="max-width: 75%;">
 
-<img src="Images/Following.png" alt="Followings Page" title="Following Page">
+<img src="Images/Following.png" alt="Followings Page" title="Following Page" style="max-width: 75%;">
