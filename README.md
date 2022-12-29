@@ -10,8 +10,8 @@ This tool helping you to get Github users informations and dump their followers 
 ```
 And now you're good to go..
 
-![Alt text](/Github Users/Images/Index.png "Index Page")
+<img src="Images/Index.png" alt="Index Page" title="Index Page">
 
-![Alt text](/Github Users/Images/Followers.png "Followers Page")
+<img src="Images/Followers.png" alt="Followers Page" title="Followers Page">
 
-![Alt text](/Github Users/Images/Following.png "Following Page")
+<img src="Images/Following.png" alt="Followings Page" title="Following Page">
