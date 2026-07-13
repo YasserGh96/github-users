@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 final class UserFollowsViewController: MAViewController {
     
@@ -34,6 +35,12 @@ final class UserFollowsViewController: MAViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
+        setupUI()
+        bindComponents()
+        bindTableView()
+        bindSpinner()
+
         if type == .followers {
             userFollowsViewModel.getFollowers(name: name)
         } else {
@@ -41,30 +48,25 @@ final class UserFollowsViewController: MAViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupTableView()
-        setupUI()
-        bindComponents()
-        bindTableView()
-        bindSpinner()
-    }
-    
     // MARK: - Methods
     private func setupUI() {
+        view.backgroundColor = .appBackground
         setBackButton()
         set(title: type)
         
-		noDataLabel.set(text: .noUsersAvailable, color: .gray, font: .bold(30))
+		noDataLabel.set(text: .noUsersAvailable, color: .appTextSecondary, font: .semibold(18))
         noDataLabel.textAlignment = .center
+        noDataLabel.numberOfLines = 0
         noDataLabel.isHidden = true
     }
     
     private func setupTableView() {
+        tableView.backgroundColor = .appBackground
         tableView.separatorStyle = .none
-        tableView.rowHeight = 90
-        tableView.delegate = self
-        
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 112
+        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 16, right: 0)
+        tableView.rx.setDelegate(self).disposed(by: disposeBag)
     }
     
     // MARK: - Binding
@@ -96,7 +98,11 @@ final class UserFollowsViewController: MAViewController {
             .disposed(by: disposeBag)
         
         let footerSpinner = UIActivityIndicatorView(style: .gray)
-        footerSpinner.color = .main_red
+        if #available(iOS 13.0, *) {
+            footerSpinner.style = .medium
+        }
+        footerSpinner.color = .appPrimary
+        footerSpinner.hidesWhenStopped = true
         footerSpinner.startAnimating()
         footerSpinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
         tableView.tableFooterView = footerSpinner

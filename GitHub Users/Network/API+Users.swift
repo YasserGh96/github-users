@@ -19,7 +19,7 @@ extension NetworkRequest {
                 
         let nameItem = URLQueryItem(name: "q", value: name)
         let pageItem = URLQueryItem(name: "page", value: pageNumber)
-        let perPageItem = URLQueryItem(name: "per_page", value: "10")
+        let perPageItem = URLQueryItem(name: "per_page", value: "\(AppConstants.GitHubAPI.perPage)")
         
         queryURL?.queryItems = [nameItem, pageItem, perPageItem]
         
@@ -49,7 +49,7 @@ extension NetworkRequest {
         var queryURL = URLComponents(string: url)
 
         let pageItem = URLQueryItem(name: "page", value: pageNumber)
-        let perPageItem = URLQueryItem(name: "per_page", value: "10")
+        let perPageItem = URLQueryItem(name: "per_page", value: "\(AppConstants.GitHubAPI.perPage)")
         
         queryURL?.queryItems = [pageItem, perPageItem]
         
@@ -74,7 +74,7 @@ extension NetworkRequest {
         var queryURL = URLComponents(string: url)
 
         let pageItem = URLQueryItem(name: "page", value: pageNumber)
-        let perPageItem = URLQueryItem(name: "per_page", value: "10")
+        let perPageItem = URLQueryItem(name: "per_page", value: "\(AppConstants.GitHubAPI.perPage)")
         
         queryURL?.queryItems = [pageItem, perPageItem]
         

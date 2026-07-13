@@ -27,7 +27,7 @@
                     <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                     <subviews>
                         <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="hGb-ec-Kqq">
-                            <rect key="frame" x="5" y="10" width="404" height="50"/>
+                            <rect key="frame" x="16" y="12" width="382" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="f8f-Yp-jv4"/>
                             </constraints>
@@ -40,23 +40,23 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="GgS-LD-nAs">
-                            <rect key="frame" x="10" y="80" width="394" height="738"/>
+                            <rect key="frame" x="16" y="78" width="382" height="740"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         </tableView>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="Hpk-82-q9b" firstAttribute="leading" secondItem="m3O-DB-lxF" secondAttribute="leading" constant="25" id="4eI-7i-WzR"/>
-                        <constraint firstItem="hGb-ec-Kqq" firstAttribute="top" secondItem="m3O-DB-lxF" secondAttribute="top" constant="10" id="F6x-mt-Vqt"/>
+                        <constraint firstItem="hGb-ec-Kqq" firstAttribute="top" secondItem="m3O-DB-lxF" secondAttribute="top" constant="12" id="F6x-mt-Vqt"/>
                         <constraint firstAttribute="trailing" secondItem="Hpk-82-q9b" secondAttribute="trailing" constant="25" id="I4s-4r-orx"/>
                         <constraint firstItem="Hpk-82-q9b" firstAttribute="centerY" secondItem="m3O-DB-lxF" secondAttribute="centerY" id="TOD-T6-ZdN"/>
-                        <constraint firstItem="GgS-LD-nAs" firstAttribute="leading" secondItem="m3O-DB-lxF" secondAttribute="leading" constant="10" id="Unk-10-ymA"/>
+                        <constraint firstItem="GgS-LD-nAs" firstAttribute="leading" secondItem="m3O-DB-lxF" secondAttribute="leading" constant="16" id="Unk-10-ymA"/>
                         <constraint firstAttribute="bottom" secondItem="GgS-LD-nAs" secondAttribute="bottom" id="ado-yI-0xA"/>
                         <constraint firstItem="Hpk-82-q9b" firstAttribute="centerX" secondItem="m3O-DB-lxF" secondAttribute="centerX" id="b6t-pp-b1Y"/>
-                        <constraint firstAttribute="trailing" secondItem="hGb-ec-Kqq" secondAttribute="trailing" constant="5" id="fc6-k1-Upy"/>
-                        <constraint firstItem="GgS-LD-nAs" firstAttribute="top" secondItem="hGb-ec-Kqq" secondAttribute="bottom" constant="20" id="kZB-GG-tds"/>
-                        <constraint firstAttribute="trailing" secondItem="GgS-LD-nAs" secondAttribute="trailing" constant="10" id="xi4-u2-idi"/>
-                        <constraint firstItem="hGb-ec-Kqq" firstAttribute="leading" secondItem="m3O-DB-lxF" secondAttribute="leading" constant="5" id="zcW-ak-BnI"/>
+                        <constraint firstAttribute="trailing" secondItem="hGb-ec-Kqq" secondAttribute="trailing" constant="16" id="fc6-k1-Upy"/>
+                        <constraint firstItem="GgS-LD-nAs" firstAttribute="top" secondItem="hGb-ec-Kqq" secondAttribute="bottom" constant="16" id="kZB-GG-tds"/>
+                        <constraint firstAttribute="trailing" secondItem="GgS-LD-nAs" secondAttribute="trailing" constant="16" id="xi4-u2-idi"/>
+                        <constraint firstItem="hGb-ec-Kqq" firstAttribute="leading" secondItem="m3O-DB-lxF" secondAttribute="leading" constant="16" id="zcW-ak-BnI"/>
                     </constraints>
                 </view>
             </subviews>

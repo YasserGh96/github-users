@@ -19,10 +19,9 @@ final class MANavigationController: UINavigationController {
     
     // MARK: - Methods
     private func setupUI() {
-        navigationBar.setBackgroundImage(.empty, for: .default)
-        navigationBar.shadowImage = .empty
         navigationBar.isTranslucent = false
-        navigationBar.barTintColor = .white
+        navigationBar.barTintColor = .appSurface
+        navigationBar.tintColor = .appTextPrimary
         
         let lineHeight: CGFloat = 1.3
         let line = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: lineHeight))
@@ -36,11 +35,25 @@ final class MANavigationController: UINavigationController {
         line.centerXAnchor.constraint(equalTo: navigationBar.centerXAnchor).isActive = true
         line.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor).isActive = true
         
-        if #available(iOS 15, *) {
+        if #available(iOS 13, *) {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
-            UINavigationBar.appearance().standardAppearance = appearance
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
+            appearance.backgroundColor = .appSurface
+            appearance.shadowColor = .appBorder
+            appearance.titleTextAttributes = [
+                .foregroundColor: UIColor.appTextPrimary,
+                .font: UIFont.semibold(17)
+            ]
+
+            navigationBar.standardAppearance = appearance
+            navigationBar.compactAppearance = appearance
+
+            if #available(iOS 15, *) {
+                navigationBar.scrollEdgeAppearance = appearance
+            }
+        } else {
+            navigationBar.setBackgroundImage(.empty, for: .default)
+            navigationBar.shadowImage = .empty
         }
     }
     

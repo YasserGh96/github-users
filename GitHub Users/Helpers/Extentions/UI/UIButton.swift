@@ -15,6 +15,9 @@ extension UIButton {
         
         contentVerticalAlignment = .center
         contentHorizontalAlignment = .center
+        titleLabel?.lineBreakMode = .byTruncatingTail
+        titleLabel?.adjustsFontSizeToFitWidth = true
+        titleLabel?.minimumScaleFactor = 0.82
     }
     
     func set(color: UIColor?) {

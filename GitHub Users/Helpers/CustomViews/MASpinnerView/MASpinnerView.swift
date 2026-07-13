@@ -54,20 +54,22 @@ final class MASpinnerView: UIView {
         
         backgroundColor = .clear
         view.backgroundColor = .clear
-        backgroundView.backgroundColor = .white
+        backgroundView.backgroundColor = .appElevatedSurface
         backgroundView.layer.cornerRadius = 20
         backgroundView.clipsToBounds = true
-        backgroundView.addBorder(radius: 16, width: 1, color: .alert_border)
-        backgroundView.addShadow(color: .alert_shadow, radius: 0, opacity: 0.7, offset: CGSize(width: 0, height: 1.5))
+        backgroundView.addBorder(radius: 16, width: 1, color: .appBorder)
+        backgroundView.addShadow(color: .appShadow, radius: 12, opacity: 1, offset: CGSize(width: 0, height: 8))
         backgroundView.layer.masksToBounds = false
         
         spinner.startAnimating()
-        spinner.style = .whiteLarge
-        spinner.color = .main_red
+        if #available(iOS 13.0, *) {
+            spinner.style = .large
+        } else {
+            spinner.style = .whiteLarge
+        }
+        spinner.color = .appPrimary
         
     }
     func stop() {
     }
 }
-
-

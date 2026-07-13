@@ -28,6 +28,7 @@ final class InitialViewController: MAViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .appBackground
         
     }
     override func viewDidAppear(_ animated: Bool) {

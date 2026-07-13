@@ -8,10 +8,30 @@
 import UIKit
 
 extension UIColor {
-    static let navigationBorder = hex("828282").withAlphaComponent(0.1)
-    static let background = hex("#F8F8F8")
-    static let border_medium_grey = hex("#E0E0E0")
-    static let main_red = hex("#9C0C1F")
+    private static func adaptive(light: UIColor, dark: UIColor) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { trait in
+                trait.userInterfaceStyle == .dark ? dark : light
+            }
+        }
+
+        return light
+    }
+
+    static let appBackground = adaptive(light: hex("#F6F8FA"), dark: hex("#0D1117"))
+    static let appSurface = adaptive(light: .white, dark: hex("#161B22"))
+    static let appElevatedSurface = adaptive(light: .white, dark: hex("#21262D"))
+    static let appPrimary = adaptive(light: hex("#0969DA"), dark: hex("#58A6FF"))
+    static let appTextPrimary = adaptive(light: hex("#24292F"), dark: hex("#F0F6FC"))
+    static let appTextSecondary = adaptive(light: hex("#57606A"), dark: hex("#8B949E"))
+    static let appBorder = adaptive(light: hex("#D0D7DE"), dark: hex("#30363D"))
+    static let appShadow = adaptive(light: UIColor.black.withAlphaComponent(0.08), dark: .clear)
+    static let appSearchBackground = adaptive(light: hex("#EAEEF2"), dark: hex("#21262D"))
+
+    static let navigationBorder = appBorder.withAlphaComponent(0.8)
+    static let background = appBackground
+    static let border_medium_grey = appBorder
+    static let main_red = appPrimary
     static let title_grey = hex("#949494")
     static let field_red = hex("#FD0021")
     static let success_green = hex("#78C963")

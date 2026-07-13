@@ -42,6 +42,7 @@ final class UserSearchViewController: MAViewController {
         setupTableView()
         bindComponents()
         bindTableView()
+        bindSearchBar()
         bindSpinner()
 		
     }
@@ -52,18 +53,34 @@ final class UserSearchViewController: MAViewController {
     }
     
     private func setupUI() {
-        userSearchBar.delegate = self
+        view.backgroundColor = .appBackground
+        contentView.backgroundColor = .appBackground
+
 		userSearchBar.placeholder = .searchBarPlaceHolder
-		noUsersLabel.set(text: .noUsersAvailable, color: .gray, font: .bold(30))
+        userSearchBar.searchBarStyle = .minimal
+        userSearchBar.tintColor = .appPrimary
+        userSearchBar.backgroundImage = UIImage()
+
+        if #available(iOS 13.0, *) {
+            userSearchBar.searchTextField.backgroundColor = .appSearchBackground
+            userSearchBar.searchTextField.textColor = .appTextPrimary
+            userSearchBar.searchTextField.leftView?.tintColor = .appTextSecondary
+        }
+
+		noUsersLabel.set(text: .Search.emptyTitle, color: .appTextSecondary, font: .semibold(18))
         noUsersLabel.textAlignment = .center
-        noUsersLabel.isHidden = true
+        noUsersLabel.numberOfLines = 0
+        noUsersLabel.isHidden = false
     }
     
     private func setupTableView() {
+        tableView.backgroundColor = .appBackground
         tableView.separatorStyle = .none
-        tableView.rowHeight = 90
-        tableView.delegate = self
-        
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 112
+        tableView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 16, right: 0)
+        tableView.keyboardDismissMode = .onDrag
+        tableView.isHidden = true
     }
     
     private func navigateToUserFollows(name: String, type: String) {
@@ -102,6 +119,11 @@ final class UserSearchViewController: MAViewController {
             .observe(on: MainScheduler.instance)
             .bind(to: noUsersLabel.rx.isHidden)
             .disposed(by: disposeBag)
+
+        userSearchViewModel.emptyMessage.asObservable()
+            .observe(on: MainScheduler.instance)
+            .bind(to: noUsersLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     private func bindSpinner() {
@@ -112,7 +134,11 @@ final class UserSearchViewController: MAViewController {
             .disposed(by: disposeBag)
         
         let footerSpinner = UIActivityIndicatorView(style: .gray)
-        footerSpinner.color = .main_red
+        if #available(iOS 13.0, *) {
+            footerSpinner.style = .medium
+        }
+        footerSpinner.color = .appPrimary
+        footerSpinner.hidesWhenStopped = true
         footerSpinner.startAnimating()
         footerSpinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
         tableView.tableFooterView = footerSpinner
@@ -124,30 +150,36 @@ final class UserSearchViewController: MAViewController {
     }
     
     private func bindSearchBar() {
-        userSearchBar.delegate = self
         userSearchBar
             .rx
             .text
             .orEmpty
-            .bind(to: userSearchViewModel.seacrhBarValue)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .distinctUntilChanged()
+            .debounce(.milliseconds(350), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] query in
+                guard let self = self else { return }
+
+                if query.isEmpty {
+                    self.userSearchViewModel.clearResults()
+                } else {
+                    self.userSearchViewModel.getUsers(name: query)
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
 
-// MARK: - Search Bar Delegate
-extension UserSearchViewController: UISearchBarDelegate, UITableViewDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText != "" {
-            userSearchViewModel.getUsers(name: searchText)
-        }
-    }
-    
+// MARK: - UITableViewDelegate
+extension UserSearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let lastSectionIndex = tableView.numberOfSections - 1
         let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
-        if indexPath.section ==  lastSectionIndex && indexPath.row == lastRowIndex && indexPath.row != 0 {
+        let query = userSearchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if indexPath.section ==  lastSectionIndex && indexPath.row == lastRowIndex && indexPath.row != 0 && !query.isEmpty {
             if userSearchViewModel.isPagination {
-                userSearchViewModel.getUsers(name: userSearchBar.text ?? "")
+                userSearchViewModel.getUsers(name: query)
             }
         }
     }

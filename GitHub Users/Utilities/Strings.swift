@@ -7,7 +7,14 @@
 
 import Foundation
 
-// MARK: - API Errors
+enum AppConstants {
+    enum GitHubAPI {
+        static let acceptedMediaType = "application/vnd.github+json"
+        static let apiVersion = "2022-11-28"
+        static let perPage = 20
+    }
+}
+
 extension String {
     struct API {
         static let error = "Error"
@@ -17,11 +24,24 @@ extension String {
         static let serverIsNotResponding = "Server is not responding!"
     }
     
+    struct Search {
+        static let title = "Search Users"
+        static let placeholder = "Search GitHub usernames"
+        static let emptyTitle = "Search GitHub users"
+        static let noResults = "No users found"
+    }
+
+    struct Follows {
+        static let followers = "Followers"
+        static let following = "Following"
+        static let empty = "No users available"
+    }
+
     static let gitHubLogo = "github logo"
-    static let followers = "Followers"
-    static let following = "Following"
-    static let searchUsers = "Search Users"
-	static let searchBarPlaceHolder = "Search Github"
-    static let noUsersAvailable = "No Users Available"
+    static let followers = Follows.followers
+    static let following = Follows.following
+    static let searchUsers = Search.title
+	static let searchBarPlaceHolder = Search.placeholder
+    static let noUsersAvailable = Follows.empty
     
 }

@@ -28,7 +28,8 @@ class NetworkRequest: NSObject {
     // MARK: - HTTP Headers
     var headers : HTTPHeaders {
         var _headers: HTTPHeaders = [:]
-        _headers["Accept"] = "application/vnd.github+json"
+        _headers["Accept"] = AppConstants.GitHubAPI.acceptedMediaType
+        _headers["X-GitHub-Api-Version"] = AppConstants.GitHubAPI.apiVersion
         
         return _headers
     }
@@ -57,7 +58,6 @@ class NetworkRequest: NSObject {
                let range = NSMakeRange(0, fullURLString.count)
                                   
                    //guard let endpointURL: URLConvertible = queryURL else {return}
-               print(fullURLString)
                return regex.stringByReplacingMatches(in: fullURLString, options: [], range: range, withTemplate: "") as String
            } catch {
                return fullURLString as String

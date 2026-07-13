@@ -45,14 +45,14 @@ final class UserFollowsViewModel {
                 if let data = result.data as? [UserModel] {
                     if strongSelf.userName == name {
                         strongSelf.usersData.append(contentsOf: data)
-                        strongSelf.totalCount += 10
+                        strongSelf.totalCount += data.count
                     } else {
                         strongSelf.userName = name
                         strongSelf.usersData = data
-                        strongSelf.totalCount = 10
+                        strongSelf.totalCount = data.count
                     }
                     
-                    strongSelf.isPagination = data.count == 10
+                    strongSelf.isPagination = data.count == AppConstants.GitHubAPI.perPage
                     
                     strongSelf.tableViewHide.accept(strongSelf.usersData.isEmpty)
                     strongSelf.noUsersLabelHide.accept(!strongSelf.usersData.isEmpty)
@@ -79,14 +79,14 @@ final class UserFollowsViewModel {
                 if let data = result.data as? [UserModel] {
                     if strongSelf.userName == name {
                         strongSelf.usersData.append(contentsOf: data)
-                        strongSelf.totalCount += 10
+                        strongSelf.totalCount += data.count
                     } else {
                         strongSelf.userName = name
                         strongSelf.usersData = data
-                        strongSelf.totalCount = 10
+                        strongSelf.totalCount = data.count
                     }
                     
-                    strongSelf.isPagination = data.count == 10
+                    strongSelf.isPagination = data.count == AppConstants.GitHubAPI.perPage
                     
                     strongSelf.tableViewHide.accept(strongSelf.usersData.isEmpty)
                     strongSelf.noUsersLabelHide.accept(!strongSelf.usersData.isEmpty)

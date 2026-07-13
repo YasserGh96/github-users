@@ -21,6 +21,8 @@ final class UserTableViewCell: MATableViewCell {
     
     // MARK: - Properties
     private var hide: Bool = false
+    private var buttonsStackConstraints: [NSLayoutConstraint] = []
+    private var hiddenNameTrailingConstraint: NSLayoutConstraint?
     var user = UserModel()
     var cellBag: DisposeBag = DisposeBag()
 
@@ -45,25 +47,67 @@ final class UserTableViewCell: MATableViewCell {
     
     // MARK: - Methods
     private func setupUI() {
+        selectionStyle = .none
+        backgroundColor = .clear
         contentView.backgroundColor = .clear
         
-        boxView.backgroundColor = .clear
-        boxView.addBorder(radius: 15, width: 1, color: .border_medium_grey)
-        avatarView.addBorder(radius: 10, width: 1, color: .border_medium_grey)
+        buttonsStackConstraints = boxView.constraints.filter {
+            $0.firstItem === buttonsStackView || $0.secondItem === buttonsStackView
+        }
+        hiddenNameTrailingConstraint = nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: boxView.trailingAnchor, constant: -16)
+        boxView.heightAnchor.constraint(greaterThanOrEqualToConstant: 88).isActive = true
+
+        boxView.backgroundColor = .appSurface
+        boxView.addBorder(radius: 14, width: 1, color: .appBorder)
+        boxView.addShadow(color: .appShadow, radius: 10, opacity: 1, offset: CGSize(width: 0, height: 6))
+        boxView.layer.masksToBounds = false
+
+        avatarView.backgroundColor = .appElevatedSurface
+        avatarView.addBorder(radius: 12, width: 1, color: .appBorder)
         
         nameLabel.numberOfLines = 2
+        nameLabel.lineBreakMode = .byTruncatingMiddle
+        nameLabel.adjustsFontSizeToFitWidth = true
+        nameLabel.minimumScaleFactor = 0.85
         
         buttonsStackView.isHidden = hide
     }
     
     func set(hide: Bool = false) {
+        self.hide = hide
+        setButtons(hidden: hide)
         avatar.get(with: user.avatar_url)
         
-        nameLabel.set(text: user.login, color: .black, font: .semibold(16))
+        nameLabel.set(text: user.login, color: .appTextPrimary, font: .semibold(17))
         
         followersButton.set(filledBlue: .followers)
         FollowingButton.set(filledBlue: .following)
         
-        buttonsStackView.isHidden = hide
+        applyTheme()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyTheme()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        applyTheme()
+    }
+
+    private func setButtons(hidden: Bool) {
+        buttonsStackView.isHidden = hidden
+        buttonsStackConstraints.forEach { $0.isActive = !hidden }
+        hiddenNameTrailingConstraint?.isActive = hidden
+    }
+
+    private func applyTheme() {
+        boxView.backgroundColor = .appSurface
+        boxView.layer.borderColor = UIColor.appBorder.cgColor
+        boxView.layer.shadowColor = UIColor.appShadow.cgColor
+        avatarView.backgroundColor = .appElevatedSurface
+        avatarView.layer.borderColor = UIColor.appBorder.cgColor
+        nameLabel.textColor = .appTextPrimary
     }
 }

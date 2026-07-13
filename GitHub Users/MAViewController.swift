@@ -44,7 +44,7 @@ extension MAViewController {
     func setBackButton() {
         navigationItem.hidesBackButton = true
         
-        let arrow = UIImage.back_arrow_en.withRenderingMode(.alwaysOriginal)
+        let arrow = UIImage.back_arrow_en.withRenderingMode(.alwaysTemplate)
         let back = UIBarButtonItem(image: arrow,
                                    style: .plain,
                                    target: self,
@@ -61,11 +61,12 @@ extension MAViewController {
     // set title of navigation bar
     func set(title: String) {
         let attributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.black,
+            NSAttributedString.Key.foregroundColor: UIColor.appTextPrimary,
             NSAttributedString.Key.font: UIFont.semibold(17)
         ]
         
         navigationController?.navigationBar.titleTextAttributes = attributes
+        navigationController?.navigationBar.tintColor = .appTextPrimary
         
         self.title = title
     }
@@ -104,4 +105,3 @@ extension MAViewController {
         return spinner
     }
 }
-

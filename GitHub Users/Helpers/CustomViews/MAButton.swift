@@ -54,7 +54,8 @@ final class MAButton: UIView {
         view.backgroundColor = .clear
         contentView.backgroundColor = .clear
         
-        BackgroundView.layer.cornerRadius = 6
+        BackgroundView.layer.cornerRadius = 8
+        BackgroundView.clipsToBounds = true
     }
     
     func disable() {
@@ -91,19 +92,19 @@ extension MAButton {
 extension MAButton {
     func set(filled title: String) {
         BackgroundView.backgroundColor = .main_red
-        button.set(title: title, color: .white, font: .semibold(17))
+        button.set(title: title, color: .white, font: .semibold(14))
     }
     
     func set(filled title: String, borderColor: UIColor, backgroundColor: UIColor, icon: UIImage) {
         BackgroundView.backgroundColor = backgroundColor
-        BackgroundView.addBorder(radius: 6, width: 1, color: borderColor)
-        button.set(title: title, color: .main_red, font: .semibold(17))
+        BackgroundView.addBorder(radius: 8, width: 1, color: borderColor)
+        button.set(title: title, color: .main_red, font: .semibold(14))
         
     }
     
     func set(filledBlue title: String) {
-        BackgroundView.backgroundColor = .systemBlue
-        button.set(title: title, color: .white, font: .semibold(17))
+        BackgroundView.backgroundColor = .appPrimary
+        button.set(title: title, color: .white, font: .semibold(13))
     }
 
 }
@@ -111,10 +112,9 @@ extension MAButton {
 //MARK: - Button Transparent
 extension MAButton {
     func set(transparent title: String) {
-        BackgroundView.addBorder(radius: 6, width: 1, color: .main_red)
+        BackgroundView.addBorder(radius: 8, width: 1, color: .main_red)
         BackgroundView.backgroundColor = .clear
-        button.set(title: title, color: .main_red, font: .semibold(17))
+        button.set(title: title, color: .main_red, font: .semibold(14))
     }
     
 }
-

@@ -16,8 +16,9 @@ final class UserSearchViewModel {
     let users = PublishSubject<[UserModel]>()
     var indicatorLoader = BehaviorRelay<Bool>(value: true)
     var tableFooterViewLoader = BehaviorRelay<Bool>(value: false)
-    var tableViewHide = BehaviorRelay<Bool>(value: false)
-    var noUsersLabelHide = BehaviorRelay<Bool>(value: true)
+    var tableViewHide = BehaviorRelay<Bool>(value: true)
+    var noUsersLabelHide = BehaviorRelay<Bool>(value: false)
+    var emptyMessage = BehaviorRelay<String>(value: .Search.emptyTitle)
     var usersObservable: Observable<[UserModel]> {
         return self.users.asObservable()
     }
@@ -30,7 +31,26 @@ final class UserSearchViewModel {
     private var userName: String = ""
         
     // MARK: - Methods
+    func clearResults() {
+        page = 1
+        totalCount = 0
+        userName = ""
+        usersData = []
+        isPagination = false
+        indicatorLoader.accept(true)
+        tableFooterViewLoader.accept(false)
+        tableViewHide.accept(true)
+        noUsersLabelHide.accept(false)
+        emptyMessage.accept(.Search.emptyTitle)
+        users.onNext([])
+    }
+
     func getUsers(name: String) {
+        guard !name.isEmpty else {
+            clearResults()
+            return
+        }
+
         isPagination = name == userName
         isPagination ? tableFooterViewLoader.accept(true) : indicatorLoader.accept(false)
         page = userName == name ? page + 1 : 1
@@ -48,26 +68,25 @@ final class UserSearchViewModel {
                     
                     if strongSelf.userName == name {
                         strongSelf.usersData.append(contentsOf: data.users)
-                        strongSelf.totalCount += 10
+                        strongSelf.totalCount += data.users.count
                     } else {
                         strongSelf.userName = name
                         strongSelf.usersData = data.users
-                        strongSelf.totalCount = 10
+                        strongSelf.totalCount = data.users.count
                     }
                     
-                    if (data.total_count - strongSelf.totalCount) <= 10 {
-                        strongSelf.isPagination = false
-                    } else {
-                        strongSelf.isPagination = true
-                    }
+                    strongSelf.isPagination = strongSelf.totalCount < data.total_count && data.users.count == AppConstants.GitHubAPI.perPage
                     
                     strongSelf.tableViewHide.accept(strongSelf.usersData.isEmpty)
                     strongSelf.noUsersLabelHide.accept(!strongSelf.usersData.isEmpty)
+                    strongSelf.emptyMessage.accept(.Search.noResults)
                     
                     strongSelf.users.onNext(strongSelf.usersData)
                 }
             } else {
-                print(result.displayError)
+                strongSelf.tableViewHide.accept(true)
+                strongSelf.noUsersLabelHide.accept(false)
+                strongSelf.emptyMessage.accept(result.displayError.isEmpty ? .API.baseError : result.displayError)
             }
         }
     }
