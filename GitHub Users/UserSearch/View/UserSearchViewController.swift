@@ -27,6 +27,7 @@ final class UserSearchViewController: MAViewController {
     private let emptyTitleLabel = UILabel()
     private let emptySubtitleLabel = UILabel()
     private let suggestionsStackView = UIStackView()
+    private let refreshControl = UIRefreshControl()
     
     // MARK: - Init
     required init() {
@@ -49,6 +50,7 @@ final class UserSearchViewController: MAViewController {
         bindTableView()
         bindSearchBar()
         bindSpinner()
+        bindRefreshControl()
         bindThemeChanges()
 		
     }
@@ -164,6 +166,9 @@ final class UserSearchViewController: MAViewController {
         tableView.estimatedRowHeight = 112
         tableView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 16, right: 0)
         tableView.keyboardDismissMode = .onDrag
+        tableView.refreshControl = refreshControl
+        refreshControl.attributedTitle = NSAttributedString(string: .Search.refreshTitle)
+        refreshControl.tintColor = .appPrimary
         tableView.isHidden = true
     }
 
@@ -231,6 +236,12 @@ final class UserSearchViewController: MAViewController {
             button.layer.borderColor = UIColor.appBorder.cgColor
             button.tintColor = .appPrimary
         }
+
+        refreshControl.tintColor = .appPrimary
+        refreshControl.attributedTitle = NSAttributedString(
+            string: .Search.refreshTitle,
+            attributes: [.foregroundColor: UIColor.appTextSecondary]
+        )
 
         if #available(iOS 13.0, *) {
             userSearchBar.searchTextField.backgroundColor = .appSearchBackground
@@ -305,6 +316,28 @@ final class UserSearchViewController: MAViewController {
         
         userSearchViewModel.isFooterLoading
             .drive(footerSpinner.rx.isAnimating)
+            .disposed(by: disposeBag)
+    }
+
+    private func bindRefreshControl() {
+        refreshControl.rx.controlEvent(.valueChanged)
+            .subscribe(onNext: { [weak self] in
+                self?.userSearchViewModel.refreshCurrentSearch()
+            })
+            .disposed(by: disposeBag)
+
+        userSearchViewModel.isRefreshing
+            .drive(onNext: { [weak self] isRefreshing in
+                guard let self = self else { return }
+
+                if isRefreshing {
+                    if !self.refreshControl.isRefreshing {
+                        self.refreshControl.beginRefreshing()
+                    }
+                } else {
+                    self.refreshControl.endRefreshing()
+                }
+            })
             .disposed(by: disposeBag)
     }
     

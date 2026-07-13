@@ -33,6 +33,7 @@ extension String {
         static let noResultsSubtitle = "Try another username or check the spelling."
         static let errorSubtitle = "Check your connection and try again."
         static let idPrefix = "GitHub ID"
+        static let refreshTitle = "Refreshing users"
         static let suggestedQueries = ["torvalds", "apple", "openai"]
     }
 
@@ -40,6 +41,7 @@ extension String {
         static let followers = "Followers"
         static let following = "Following"
         static let empty = "No users available"
+        static let refreshTitle = "Refreshing users"
     }
 
     struct Theme {

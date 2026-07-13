@@ -15,6 +15,7 @@ final class UserSearchViewModel {
     private let usersRelay = BehaviorRelay<[UserModel]>(value: [])
     private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
     private let isFooterLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let isRefreshingRelay = BehaviorRelay<Bool>(value: false)
     private let isTableHiddenRelay = BehaviorRelay<Bool>(value: true)
     private let isEmptyStateHiddenRelay = BehaviorRelay<Bool>(value: false)
     private let emptyMessageRelay = BehaviorRelay<String>(value: .Search.emptyTitle)
@@ -22,6 +23,7 @@ final class UserSearchViewModel {
     var users: Driver<[UserModel]> { usersRelay.asDriver() }
     var isLoading: Driver<Bool> { isLoadingRelay.asDriver() }
     var isFooterLoading: Driver<Bool> { isFooterLoadingRelay.asDriver() }
+    var isRefreshing: Driver<Bool> { isRefreshingRelay.asDriver() }
     var isTableHidden: Driver<Bool> { isTableHiddenRelay.asDriver() }
     var isEmptyStateHidden: Driver<Bool> { isEmptyStateHiddenRelay.asDriver() }
     var emptyMessage: Driver<String> { emptyMessageRelay.asDriver() }
@@ -47,13 +49,23 @@ final class UserSearchViewModel {
         isPagination = false
         isLoadingRelay.accept(false)
         isFooterLoadingRelay.accept(false)
+        isRefreshingRelay.accept(false)
         isTableHiddenRelay.accept(true)
         isEmptyStateHiddenRelay.accept(false)
         emptyMessageRelay.accept(.Search.emptyTitle)
         usersRelay.accept([])
     }
 
-    func getUsers(name: String) {
+    func refreshCurrentSearch() {
+        guard !userName.isEmpty else {
+            isRefreshingRelay.accept(false)
+            return
+        }
+
+        getUsers(name: userName, reset: true, isRefresh: true)
+    }
+
+    func getUsers(name: String, reset: Bool = false, isRefresh: Bool = false) {
         guard !name.isEmpty else {
             clearResults()
             return
@@ -66,35 +78,35 @@ final class UserSearchViewModel {
             return
         }
 
-        let isNextPage = trimmedName == userName
+        let isNextPage = !reset && trimmedName == userName
 
         if isRequestInFlight && isNextPage {
             return
         }
 
         currentSearchDisposable?.dispose()
+        stopLoading()
         isRequestInFlight = true
         isPagination = isNextPage
         page = isNextPage ? page + 1 : 1
-        isNextPage ? isFooterLoadingRelay.accept(true) : isLoadingRelay.accept(true)
+        startLoading(isNextPage: isNextPage, isRefresh: isRefresh)
 
         currentSearchDisposable = api.searchUsers(name: trimmedName, pageNumber: String(page))
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] result in
-                self?.handleSearchResult(result, query: trimmedName)
+                self?.handleSearchResult(result, query: trimmedName, shouldReset: reset)
             }, onFailure: { [weak self] error in
                 self?.handleSearchError(error)
             })
     }
 
-    private func handleSearchResult(_ result: SearchResultsModel, query: String) {
+    private func handleSearchResult(_ result: SearchResultsModel, query: String, shouldReset: Bool) {
         isRequestInFlight = false
-        isLoadingRelay.accept(false)
-        isFooterLoadingRelay.accept(false)
+        stopLoading()
         isEmptyStateHiddenRelay.accept(true)
         isTableHiddenRelay.accept(false)
 
-        if userName == query {
+        if userName == query && !shouldReset {
             usersData.append(contentsOf: result.users)
         } else {
             userName = query
@@ -110,10 +122,25 @@ final class UserSearchViewModel {
 
     private func handleSearchError(_ error: Error) {
         isRequestInFlight = false
-        isLoadingRelay.accept(false)
-        isFooterLoadingRelay.accept(false)
+        stopLoading()
         isTableHiddenRelay.accept(true)
         isEmptyStateHiddenRelay.accept(false)
         emptyMessageRelay.accept(error.localizedDescription.isEmpty ? .API.baseError : error.localizedDescription)
+    }
+
+    private func startLoading(isNextPage: Bool, isRefresh: Bool) {
+        if isNextPage {
+            isFooterLoadingRelay.accept(true)
+        } else if isRefresh {
+            isRefreshingRelay.accept(true)
+        } else {
+            isLoadingRelay.accept(true)
+        }
+    }
+
+    private func stopLoading() {
+        isLoadingRelay.accept(false)
+        isFooterLoadingRelay.accept(false)
+        isRefreshingRelay.accept(false)
     }
 }

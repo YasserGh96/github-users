@@ -15,12 +15,14 @@ final class UserFollowsViewModel {
     private let usersRelay = BehaviorRelay<[UserModel]>(value: [])
     private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
     private let isFooterLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let isRefreshingRelay = BehaviorRelay<Bool>(value: false)
     private let isTableHiddenRelay = BehaviorRelay<Bool>(value: false)
     private let isEmptyStateHiddenRelay = BehaviorRelay<Bool>(value: true)
     
     var users: Driver<[UserModel]> { usersRelay.asDriver() }
     var isLoading: Driver<Bool> { isLoadingRelay.asDriver() }
     var isFooterLoading: Driver<Bool> { isFooterLoadingRelay.asDriver() }
+    var isRefreshing: Driver<Bool> { isRefreshingRelay.asDriver() }
     var isTableHidden: Driver<Bool> { isTableHiddenRelay.asDriver() }
     var isEmptyStateHidden: Driver<Bool> { isEmptyStateHiddenRelay.asDriver() }
 
@@ -44,33 +46,53 @@ final class UserFollowsViewModel {
         getUsers(name: name, request: api.following(name:pageNumber:))
     }
 
-    private func getUsers(name: String, request: @escaping (String, String) -> Single<[UserModel]>) {
-        guard !isRequestInFlight else {
+    func refreshFollowers(name: String) {
+        getUsers(name: name, request: api.followers(name:pageNumber:), reset: true, isRefresh: true)
+    }
+
+    func refreshFollowing(name: String) {
+        getUsers(name: name, request: api.following(name:pageNumber:), reset: true, isRefresh: true)
+    }
+
+    private func getUsers(name: String,
+                          request: @escaping (String, String) -> Single<[UserModel]>,
+                          reset: Bool = false,
+                          isRefresh: Bool = false) {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmedName.isEmpty else {
+            stopLoading()
             return
         }
 
-        let isNextPage = userName == name
+        let isNextPage = !reset && userName == trimmedName
+
+        if isRequestInFlight && isNextPage {
+            return
+        }
+
+        currentRequestDisposable?.dispose()
+        stopLoading()
         isRequestInFlight = true
         page = isNextPage ? page + 1 : 1
-        isNextPage ? isFooterLoadingRelay.accept(true) : isLoadingRelay.accept(true)
+        startLoading(isNextPage: isNextPage, isRefresh: isRefresh)
 
-        currentRequestDisposable = request(name, String(page))
+        currentRequestDisposable = request(trimmedName, String(page))
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] users in
-                self?.handleUsers(users, name: name)
+                self?.handleUsers(users, name: trimmedName, shouldReset: reset)
             }, onFailure: { [weak self] error in
                 self?.handleError(error)
             })
     }
 
-    private func handleUsers(_ users: [UserModel], name: String) {
+    private func handleUsers(_ users: [UserModel], name: String, shouldReset: Bool) {
         isRequestInFlight = false
-        isLoadingRelay.accept(false)
-        isFooterLoadingRelay.accept(false)
+        stopLoading()
         isEmptyStateHiddenRelay.accept(true)
         isTableHiddenRelay.accept(false)
 
-        if userName == name {
+        if userName == name && !shouldReset {
             usersData.append(contentsOf: users)
         } else {
             userName = name
@@ -85,10 +107,25 @@ final class UserFollowsViewModel {
 
     private func handleError(_ error: Error) {
         isRequestInFlight = false
-        isLoadingRelay.accept(false)
-        isFooterLoadingRelay.accept(false)
+        stopLoading()
         isTableHiddenRelay.accept(true)
         isEmptyStateHiddenRelay.accept(false)
         log(error.localizedDescription)
+    }
+
+    private func startLoading(isNextPage: Bool, isRefresh: Bool) {
+        if isNextPage {
+            isFooterLoadingRelay.accept(true)
+        } else if isRefresh {
+            isRefreshingRelay.accept(true)
+        } else {
+            isLoadingRelay.accept(true)
+        }
+    }
+
+    private func stopLoading() {
+        isLoadingRelay.accept(false)
+        isFooterLoadingRelay.accept(false)
+        isRefreshingRelay.accept(false)
     }
 }
