@@ -9,34 +9,19 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    // MARK: - Properties
-    var window: UIWindow?
     
     // MARK: - Start
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
        // app.delegate = self
 
-        start()
         return true
     }
 
     // MARK: UISceneSession Lifecycle
-
-    
-    func start() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-       
-        let vc = InitialViewController()
-        vc.window = window
-        
-        
-        window?.rootViewController = vc
-
-        window?.makeKeyAndVisible()
-
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-    
 }
-

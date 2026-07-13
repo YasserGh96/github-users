@@ -6,43 +6,51 @@
 //
 
 import Foundation
-import Alamofire
 import RxSwift
 import RxCocoa
 
 final class UserSearchViewModel {
     
     // MARK: - Properties
-    let users = PublishSubject<[UserModel]>()
-    var indicatorLoader = BehaviorRelay<Bool>(value: true)
-    var tableFooterViewLoader = BehaviorRelay<Bool>(value: false)
-    var tableViewHide = BehaviorRelay<Bool>(value: true)
-    var noUsersLabelHide = BehaviorRelay<Bool>(value: false)
-    var emptyMessage = BehaviorRelay<String>(value: .Search.emptyTitle)
-    var usersObservable: Observable<[UserModel]> {
-        return self.users.asObservable()
-    }
+    private let usersRelay = BehaviorRelay<[UserModel]>(value: [])
+    private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let isFooterLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let isTableHiddenRelay = BehaviorRelay<Bool>(value: true)
+    private let isEmptyStateHiddenRelay = BehaviorRelay<Bool>(value: false)
+    private let emptyMessageRelay = BehaviorRelay<String>(value: .Search.emptyTitle)
     
+    var users: Driver<[UserModel]> { usersRelay.asDriver() }
+    var isLoading: Driver<Bool> { isLoadingRelay.asDriver() }
+    var isFooterLoading: Driver<Bool> { isFooterLoadingRelay.asDriver() }
+    var isTableHidden: Driver<Bool> { isTableHiddenRelay.asDriver() }
+    var isEmptyStateHidden: Driver<Bool> { isEmptyStateHiddenRelay.asDriver() }
+    var emptyMessage: Driver<String> { emptyMessageRelay.asDriver() }
+
     var isPagination: Bool = false
-    var seacrhBarValue = BehaviorRelay<String>(value: "")
     private var page: Int = 1
-    private var totalCount: Int = 0
     private var usersData: [UserModel] = []
     private var userName: String = ""
+    private var currentSearchDisposable: Disposable?
+    private var isRequestInFlight = false
+
+    deinit {
+        currentSearchDisposable?.dispose()
+    }
         
     // MARK: - Methods
     func clearResults() {
+        currentSearchDisposable?.dispose()
+        isRequestInFlight = false
         page = 1
-        totalCount = 0
         userName = ""
         usersData = []
         isPagination = false
-        indicatorLoader.accept(true)
-        tableFooterViewLoader.accept(false)
-        tableViewHide.accept(true)
-        noUsersLabelHide.accept(false)
-        emptyMessage.accept(.Search.emptyTitle)
-        users.onNext([])
+        isLoadingRelay.accept(false)
+        isFooterLoadingRelay.accept(false)
+        isTableHiddenRelay.accept(true)
+        isEmptyStateHiddenRelay.accept(false)
+        emptyMessageRelay.accept(.Search.emptyTitle)
+        usersRelay.accept([])
     }
 
     func getUsers(name: String) {
@@ -51,43 +59,61 @@ final class UserSearchViewModel {
             return
         }
 
-        isPagination = name == userName
-        isPagination ? tableFooterViewLoader.accept(true) : indicatorLoader.accept(false)
-        page = userName == name ? page + 1 : 1
-        api.searchUsers(name: name, pageNumber: String(page)) { [weak self] result in
-            guard let strongSelf = self else { return }
-            
-            strongSelf.indicatorLoader.accept(true)
-            strongSelf.tableFooterViewLoader.accept(false)
-            
-            strongSelf.noUsersLabelHide.accept(true)
-            strongSelf.tableViewHide.accept(false)
-            
-            if result.success {
-                if let data = result.data as? SearchResultsModel {
-                    
-                    if strongSelf.userName == name {
-                        strongSelf.usersData.append(contentsOf: data.users)
-                        strongSelf.totalCount += data.users.count
-                    } else {
-                        strongSelf.userName = name
-                        strongSelf.usersData = data.users
-                        strongSelf.totalCount = data.users.count
-                    }
-                    
-                    strongSelf.isPagination = strongSelf.totalCount < data.total_count && data.users.count == AppConstants.GitHubAPI.perPage
-                    
-                    strongSelf.tableViewHide.accept(strongSelf.usersData.isEmpty)
-                    strongSelf.noUsersLabelHide.accept(!strongSelf.usersData.isEmpty)
-                    strongSelf.emptyMessage.accept(.Search.noResults)
-                    
-                    strongSelf.users.onNext(strongSelf.usersData)
-                }
-            } else {
-                strongSelf.tableViewHide.accept(true)
-                strongSelf.noUsersLabelHide.accept(false)
-                strongSelf.emptyMessage.accept(result.displayError.isEmpty ? .API.baseError : result.displayError)
-            }
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmedName.isEmpty else {
+            clearResults()
+            return
         }
+
+        let isNextPage = trimmedName == userName
+
+        if isRequestInFlight && isNextPage {
+            return
+        }
+
+        currentSearchDisposable?.dispose()
+        isRequestInFlight = true
+        isPagination = isNextPage
+        page = isNextPage ? page + 1 : 1
+        isNextPage ? isFooterLoadingRelay.accept(true) : isLoadingRelay.accept(true)
+
+        currentSearchDisposable = api.searchUsers(name: trimmedName, pageNumber: String(page))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] result in
+                self?.handleSearchResult(result, query: trimmedName)
+            }, onFailure: { [weak self] error in
+                self?.handleSearchError(error)
+            })
+    }
+
+    private func handleSearchResult(_ result: SearchResultsModel, query: String) {
+        isRequestInFlight = false
+        isLoadingRelay.accept(false)
+        isFooterLoadingRelay.accept(false)
+        isEmptyStateHiddenRelay.accept(true)
+        isTableHiddenRelay.accept(false)
+
+        if userName == query {
+            usersData.append(contentsOf: result.users)
+        } else {
+            userName = query
+            usersData = result.users
+        }
+
+        isPagination = usersData.count < result.total_count && result.users.count == AppConstants.GitHubAPI.perPage
+        isTableHiddenRelay.accept(usersData.isEmpty)
+        isEmptyStateHiddenRelay.accept(!usersData.isEmpty)
+        emptyMessageRelay.accept(.Search.noResults)
+        usersRelay.accept(usersData)
+    }
+
+    private func handleSearchError(_ error: Error) {
+        isRequestInFlight = false
+        isLoadingRelay.accept(false)
+        isFooterLoadingRelay.accept(false)
+        isTableHiddenRelay.accept(true)
+        isEmptyStateHiddenRelay.accept(false)
+        emptyMessageRelay.accept(error.localizedDescription.isEmpty ? .API.baseError : error.localizedDescription)
     }
 }

@@ -28,13 +28,25 @@ extension String {
         static let title = "Search Users"
         static let placeholder = "Search GitHub usernames"
         static let emptyTitle = "Search GitHub users"
+        static let emptySubtitle = "Start with a username or try one of these suggestions."
         static let noResults = "No users found"
+        static let noResultsSubtitle = "Try another username or check the spelling."
+        static let errorSubtitle = "Check your connection and try again."
+        static let idPrefix = "GitHub ID"
+        static let suggestedQueries = ["torvalds", "apple", "openai"]
     }
 
     struct Follows {
         static let followers = "Followers"
         static let following = "Following"
         static let empty = "No users available"
+    }
+
+    struct Theme {
+        static let menuTitle = "Theme"
+        static let system = "System"
+        static let light = "Light"
+        static let dark = "Dark"
     }
 
     static let gitHubLogo = "github logo"

@@ -88,11 +88,11 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="FollowingButton" destination="Txo-Mz-Ejs" id="Gga-06-Qfl"/>
                 <outlet property="avatar" destination="GnH-L7-aaL" id="TMa-z9-FuC"/>
                 <outlet property="avatarView" destination="tpT-bT-CHW" id="dfA-Tz-j5H"/>
                 <outlet property="boxView" destination="SAr-Kv-gim" id="le5-Pt-CGr"/>
                 <outlet property="buttonsStackView" destination="2GX-w5-1O3" id="Dmo-HO-gdX"/>
+                <outlet property="followingButton" destination="Txo-Mz-Ejs" id="Gga-06-Qfl"/>
                 <outlet property="followersButton" destination="XOg-hc-Zip" id="BEf-25-epd"/>
                 <outlet property="nameLabel" destination="t6K-pm-H20" id="bPe-H0-CiL"/>
             </connections>

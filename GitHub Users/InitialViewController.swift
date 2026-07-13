@@ -12,7 +12,7 @@ import Lottie
 final class InitialViewController: MAViewController {
     
     // MARK: - Properties
-    var window: UIWindow?
+    weak var window: UIWindow?
     private var animationView: AnimationView = AnimationView()
     
     // MARK: - Init
@@ -54,7 +54,8 @@ final class InitialViewController: MAViewController {
         let navigation = MANavigationController(rootViewController: userSearchVC)
         navigation.modalPresentationStyle = .overFullScreen
         
-        window?.rootViewController = navigation
-        window?.makeKeyAndVisible()
+        let activeWindow = window ?? view.window
+        activeWindow?.rootViewController = navigation
+        activeWindow?.makeKeyAndVisible()
     }
 }

@@ -31,9 +31,5 @@ final class AppManager {
         .users,
         .followers
     ]
-    
-    // MARK: - Data
-    var delegate: AppDelegate!
 }
-
 

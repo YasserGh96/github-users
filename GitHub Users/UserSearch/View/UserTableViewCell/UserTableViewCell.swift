@@ -16,22 +16,30 @@ final class UserTableViewCell: MATableViewCell {
     @IBOutlet private weak var avatar: UIImageView!
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var followersButton: MAButton!
-    @IBOutlet private weak var FollowingButton: MAButton!
+    @IBOutlet private weak var followingButton: MAButton!
     @IBOutlet private weak var buttonsStackView: UIStackView!
     
     // MARK: - Properties
+    private let accentView = UIView()
+    private let userIdLabel = UILabel()
     private var hide: Bool = false
     private var buttonsStackConstraints: [NSLayoutConstraint] = []
     private var hiddenNameTrailingConstraint: NSLayoutConstraint?
+    private var userIdTrailingToButtonsConstraint: NSLayoutConstraint?
+    private var userIdTrailingToBoxConstraint: NSLayoutConstraint?
     var user = UserModel()
     var cellBag: DisposeBag = DisposeBag()
 
     var followersTap: Observable<Void> {
-        return followersButton.bindTap()
+        return followersButton.bindTap().do(onNext: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        })
     }
     
     var followingTap: Observable<Void> {
-        return FollowingButton.bindTap()
+        return followingButton.bindTap().do(onNext: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        })
     }
     
     // MARK: - Init
@@ -55,15 +63,16 @@ final class UserTableViewCell: MATableViewCell {
             $0.firstItem === buttonsStackView || $0.secondItem === buttonsStackView
         }
         hiddenNameTrailingConstraint = nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: boxView.trailingAnchor, constant: -16)
-        boxView.heightAnchor.constraint(greaterThanOrEqualToConstant: 88).isActive = true
+        boxView.heightAnchor.constraint(greaterThanOrEqualToConstant: 96).isActive = true
+        setupCardDetails()
 
         boxView.backgroundColor = .appSurface
-        boxView.addBorder(radius: 14, width: 1, color: .appBorder)
-        boxView.addShadow(color: .appShadow, radius: 10, opacity: 1, offset: CGSize(width: 0, height: 6))
+        boxView.addBorder(radius: 8, width: 1, color: .appBorder)
+        boxView.addShadow(color: .appShadow, radius: 8, opacity: 1, offset: CGSize(width: 0, height: 5))
         boxView.layer.masksToBounds = false
 
         avatarView.backgroundColor = .appElevatedSurface
-        avatarView.addBorder(radius: 12, width: 1, color: .appBorder)
+        avatarView.addBorder(radius: 8, width: 1, color: .appBorder)
         
         nameLabel.numberOfLines = 2
         nameLabel.lineBreakMode = .byTruncatingMiddle
@@ -78,10 +87,11 @@ final class UserTableViewCell: MATableViewCell {
         setButtons(hidden: hide)
         avatar.get(with: user.avatar_url)
         
-        nameLabel.set(text: user.login, color: .appTextPrimary, font: .semibold(17))
+        nameLabel.set(text: "@\(user.login)", color: .appTextPrimary, font: .semibold(17))
+        userIdLabel.set(text: "\(String.Search.idPrefix) #\(user.id)", color: .appTextSecondary, font: .regular(13))
         
         followersButton.set(filledBlue: .followers)
-        FollowingButton.set(filledBlue: .following)
+        followingButton.set(filledBlue: .following)
         
         applyTheme()
     }
@@ -100,14 +110,43 @@ final class UserTableViewCell: MATableViewCell {
         buttonsStackView.isHidden = hidden
         buttonsStackConstraints.forEach { $0.isActive = !hidden }
         hiddenNameTrailingConstraint?.isActive = hidden
+        userIdTrailingToButtonsConstraint?.isActive = !hidden
+        userIdTrailingToBoxConstraint?.isActive = hidden
+    }
+
+    private func setupCardDetails() {
+        accentView.translatesAutoresizingMaskIntoConstraints = false
+        userIdLabel.translatesAutoresizingMaskIntoConstraints = false
+        userIdLabel.numberOfLines = 1
+        userIdLabel.lineBreakMode = .byTruncatingTail
+
+        boxView.insertSubview(accentView, at: 0)
+        boxView.addSubview(userIdLabel)
+
+        userIdTrailingToButtonsConstraint = userIdLabel.trailingAnchor.constraint(lessThanOrEqualTo: buttonsStackView.leadingAnchor, constant: -10)
+        userIdTrailingToBoxConstraint = userIdLabel.trailingAnchor.constraint(lessThanOrEqualTo: boxView.trailingAnchor, constant: -16)
+        userIdTrailingToBoxConstraint?.priority = .defaultLow
+        userIdTrailingToButtonsConstraint?.isActive = true
+
+        NSLayoutConstraint.activate([
+            accentView.leadingAnchor.constraint(equalTo: boxView.leadingAnchor),
+            accentView.topAnchor.constraint(equalTo: boxView.topAnchor),
+            accentView.bottomAnchor.constraint(equalTo: boxView.bottomAnchor),
+            accentView.widthAnchor.constraint(equalToConstant: 4),
+
+            userIdLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            userIdLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4)
+        ])
     }
 
     private func applyTheme() {
         boxView.backgroundColor = .appSurface
         boxView.layer.borderColor = UIColor.appBorder.cgColor
         boxView.layer.shadowColor = UIColor.appShadow.cgColor
+        accentView.backgroundColor = .appPrimary
         avatarView.backgroundColor = .appElevatedSurface
         avatarView.layer.borderColor = UIColor.appBorder.cgColor
         nameLabel.textColor = .appTextPrimary
+        userIdLabel.textColor = .appTextSecondary
     }
 }

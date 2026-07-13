@@ -12,9 +12,6 @@ class MAViewController: UIViewController {
    
     
     // MARK: - Properties
-    var hamburger: UIBarButtonItem?
-    var notificaiton: UIBarButtonItem?
-    
     var hasNotch: Bool {
         return UIDevice.hasNotch
     }

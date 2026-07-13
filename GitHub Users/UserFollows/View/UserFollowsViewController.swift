@@ -72,29 +72,27 @@ final class UserFollowsViewController: MAViewController {
     // MARK: - Binding
     private func bindTableView() {
         tableView.register(cell: UserTableViewCell.self)
-        userFollowsViewModel.users.bind(to: tableView.rx.items(cellIdentifier: UserTableViewCell.name, cellType: UserTableViewCell.self)) { (row,item,cell) in
+        userFollowsViewModel.users.drive(tableView.rx.items(cellIdentifier: UserTableViewCell.name, cellType: UserTableViewCell.self)) { _, item, cell in
             cell.user = item
             cell.set(hide: true)
         }.disposed(by: disposeBag)
     }
     
     private func bindComponents() {
-        userFollowsViewModel.tableViewHide.asObservable()
-            .observe(on: MainScheduler.instance)
-            .bind(to: tableView.rx.isHidden)
+        userFollowsViewModel.isTableHidden
+            .drive(tableView.rx.isHidden)
             .disposed(by: disposeBag)
         
-        userFollowsViewModel.noUsersLabelHide.asObservable()
-            .observe(on: MainScheduler.instance)
-            .bind(to: noDataLabel.rx.isHidden)
+        userFollowsViewModel.isEmptyStateHidden
+            .drive(noDataLabel.rx.isHidden)
             .disposed(by: disposeBag)
     }
     
     private func bindSpinner() {
         let spinner = spin()
-        userFollowsViewModel.indicatorLoader.asObservable()
-            .observe(on: MainScheduler.instance)
-            .bind(to: spinner.rx.isHidden)
+        userFollowsViewModel.isLoading
+            .map { !$0 }
+            .drive(spinner.rx.isHidden)
             .disposed(by: disposeBag)
         
         let footerSpinner = UIActivityIndicatorView(style: .gray)
@@ -107,9 +105,8 @@ final class UserFollowsViewController: MAViewController {
         footerSpinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
         tableView.tableFooterView = footerSpinner
         
-        userFollowsViewModel.tableFooterViewLoader.asObservable()
-            .observe(on: MainScheduler.instance)
-            .bind(to: footerSpinner.rx.isAnimating)
+        userFollowsViewModel.isFooterLoading
+            .drive(footerSpinner.rx.isAnimating)
             .disposed(by: disposeBag)
     }
 }
