@@ -1,40 +1,66 @@
 # GitHub Users
 
-An iOS UIKit app for searching GitHub users and browsing their followers or following lists. The project uses a lightweight MVVM structure with RxSwift bindings, Alamofire networking, Kingfisher image loading, and XIB-based UIKit screens.
+GitHub Users is a UIKit iOS app for searching GitHub accounts, browsing followers and following lists, and opening a detailed GitHub profile view.
+
+The project is built as a portfolio-friendly UIKit codebase: XIB-based screens, MVVM-style view models, RxSwift bindings, Alamofire networking, Kingfisher image loading, pagination, pull-to-refresh, reusable UI components, and light/dark theme support.
 
 ## Screenshots
 
-<p>
-  <img src="Images/Search-Polished.png" alt="Polished search screen" width="220">
-  <img src="Images/Index.png" alt="Search results screen" width="220">
-  <img src="Images/Followers.png" alt="Followers screen" width="220">
-  <img src="Images/Following.png" alt="Following screen" width="220">
-</p>
+| Search | Profile | Followers | Following |
+| --- | --- | --- | --- |
+| <img src="Images/Search.png" alt="Search screen with empty state and suggested users" width="180"> | <img src="Images/Profile.png" alt="GitHub profile details screen" width="180"> | <img src="Images/Followers.png" alt="Followers list screen" width="180"> | <img src="Images/Following.png" alt="Following list screen" width="180"> |
 
 ## Features
 
 - Search GitHub users through the public GitHub REST API.
-- Browse followers and following lists for any result.
-- Debounced search input to avoid unnecessary API calls.
+- Open a detailed profile screen with avatar, name, bio, repos, followers, following, company, location, website, and GitHub profile link.
+- Browse followers and following lists for any user.
+- Pull to refresh on search results, followers, and following screens.
+- Debounced search input to reduce unnecessary API requests.
 - Paginated loading for search and follow lists.
-- Reusable UIKit cell and button components.
-- Light/dark-mode-ready semantic color system.
-- Cleaner empty, loading, and no-results states.
+- System, light, and dark appearance modes with persisted theme selection.
+- Reusable UIKit table cell, button, spinner, navigation, and styling helpers.
+- Polished empty, loading, no-results, and error states.
+- Scene lifecycle support for modern iOS SDKs.
 
 ## Tech Stack
 
-- UIKit and XIBs
-- MVVM
-- RxSwift and RxCocoa
+- UIKit with XIB-based screens
+- MVVM-style view models
+- RxSwift, RxCocoa, and RxDataSources
 - Alamofire
 - Kingfisher
 - Lottie
 - CocoaPods
 
+## Architecture
+
+The app keeps the main responsibilities separated:
+
+- `Network`: GitHub API endpoints, request handling, result parsing, and error mapping.
+- `UserSearch`: search screen, search result model, reusable user card cell, and search view model.
+- `UserFollows`: followers/following list screen and pagination state.
+- `UserProfile`: profile model, profile API loading, and detail screen.
+- `Utilities`: app strings, colors, fonts, images, logging, and theme management.
+- `Helpers`: base view controllers, reusable views, extensions, alerts, and table cell helpers.
+
+The view models expose UI state through Rx `Driver`s so view controllers can bind loading, refresh, table visibility, empty states, and data updates in a predictable way.
+
+## API
+
+The app uses the public GitHub REST API:
+
+- `GET /search/users`
+- `GET /users/{username}`
+- `GET /users/{username}/followers`
+- `GET /users/{username}/following`
+
+No API key is required. GitHub rate-limits unauthenticated requests, so heavy testing may temporarily return rate-limit errors.
+
 ## Requirements
 
 - Xcode 15 or newer
-- iOS 13.0+
+- iOS 15.0 or newer
 - CocoaPods
 
 ## Setup
@@ -46,12 +72,8 @@ pod install
 open "GitHub Users.xcworkspace"
 ```
 
-Build and run the `GitHub Users` scheme.
+Build and run the `GitHub Users` scheme from the workspace.
 
-## API
+## Portfolio Notes
 
-The app uses the public GitHub REST API and does not require an API key. Unauthenticated requests are rate-limited by GitHub, so heavy testing may temporarily return rate-limit errors.
-
-## Notes
-
-This project intentionally highlights UIKit fundamentals: programmatic view controller setup, reusable XIB components, Rx-based binding, and clean networking boundaries.
+This project is meant to demonstrate practical UIKit maintenance and modernization: cleaning an older UIKit app, improving RxSwift usage, moving repeated UI copy into constants, fixing modern scene lifecycle requirements, adding theme support, and extending the app with real API-backed profile details.
