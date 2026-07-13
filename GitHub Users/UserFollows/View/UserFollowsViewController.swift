@@ -88,6 +88,12 @@ final class UserFollowsViewController: MAViewController {
             userFollowsViewModel.refreshFollowing(name: name)
         }
     }
+
+    private func navigateToUserProfile(_ user: UserModel) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        let vc = UserProfileViewController(username: user.login, avatarURL: user.avatar_url)
+        navigate(to: vc)
+    }
     
     // MARK: - Binding
     private func bindTableView() {
@@ -96,6 +102,12 @@ final class UserFollowsViewController: MAViewController {
             cell.user = item
             cell.set(hide: true)
         }.disposed(by: disposeBag)
+
+        tableView.rx.modelSelected(UserModel.self)
+            .subscribe(onNext: { [weak self] user in
+                self?.navigateToUserProfile(user)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindComponents() {

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		2418E1CC29362A51004452FD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2418E1CB29362A51004452FD /* UserModel.swift */; };
+		C0A7B0010000000000000001 /* UserProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A7B0010000000000000002 /* UserProfileModel.swift */; };
+		C0A7B0010000000000000003 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A7B0010000000000000004 /* UserProfileViewController.swift */; };
+		C0A7B0010000000000000005 /* UserProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A7B0010000000000000006 /* UserProfileViewModel.swift */; };
 		2418E1D129365BBC004452FD /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2418E1CF29365BBC004452FD /* UserTableViewCell.swift */; };
 		2418E1D229365BBC004452FD /* UserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2418E1D029365BBC004452FD /* UserTableViewCell.xib */; };
 		2418E1D529365C42004452FD /* MATableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2418E1D429365C42004452FD /* MATableViewCell.swift */; };
@@ -66,6 +69,9 @@
 /* Begin PBXFileReference section */
 		1E0E6037DAAE0DF61BF0C60C /* Pods_GitHub_Users.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GitHub_Users.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2418E1CB29362A51004452FD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		C0A7B0010000000000000002 /* UserProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileModel.swift; sourceTree = "<group>"; };
+		C0A7B0010000000000000004 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
+		C0A7B0010000000000000006 /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		2418E1CF29365BBC004452FD /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		2418E1D029365BBC004452FD /* UserTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserTableViewCell.xib; sourceTree = "<group>"; };
 		2418E1D429365C42004452FD /* MATableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MATableViewCell.swift; sourceTree = "<group>"; };
@@ -252,6 +258,7 @@
 				A1B2C3D4E5F60718293A0001 /* SceneDelegate.swift */,
 				24DC842E29361455004AAF38 /* AppManager.swift */,
 				2473D53029379234004D41CE /* MANavigationController.swift */,
+				C0A7B0010000000000000101 /* UserProfile */,
 				24BA48E72940BB0D0080FC62 /* UserFollows */,
 				2418E1C7293629CB004452FD /* UserSearch */,
 				2454E7F02933CAAA00994234 /* Network */,
@@ -279,6 +286,40 @@
 				24DC84302936185A004AAF38 /* API+Users.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		C0A7B0010000000000000101 /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				C0A7B0010000000000000102 /* Model */,
+				C0A7B0010000000000000103 /* View */,
+				C0A7B0010000000000000104 /* ViewModel */,
+			);
+			path = UserProfile;
+			sourceTree = "<group>";
+		};
+		C0A7B0010000000000000102 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C0A7B0010000000000000002 /* UserProfileModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C0A7B0010000000000000103 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				C0A7B0010000000000000004 /* UserProfileViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		C0A7B0010000000000000104 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				C0A7B0010000000000000006 /* UserProfileViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		245C5ADF293B83C100A19559 /* Resources */ = {
@@ -537,6 +578,7 @@
 				A1B2C3D4E5F60718293A0004 /* AppThemeManager.swift in Sources */,
 				24DC842D293612BF004AAF38 /* Strings.swift in Sources */,
 				24DC84312936185A004AAF38 /* API+Users.swift in Sources */,
+				C0A7B0010000000000000005 /* UserProfileViewModel.swift in Sources */,
 				2473D53C29379551004D41CE /* UIViewController.swift in Sources */,
 				2418E1E4293661B4004452FD /* UIButton.swift in Sources */,
 				2418E1E629366217004452FD /* UIView.swift in Sources */,
@@ -548,12 +590,14 @@
 				2454E7F42933CBD100994234 /* Network+Endpoint.swift in Sources */,
 				2473D53129379234004D41CE /* MANavigationController.swift in Sources */,
 				2418E1CC29362A51004452FD /* UserModel.swift in Sources */,
+				C0A7B0010000000000000001 /* UserProfileModel.swift in Sources */,
 				24DC842B29361284004AAF38 /* Logs.swift in Sources */,
 				24BA48ED2940BB760080FC62 /* UserFollowsViewController.swift in Sources */,
 				2473D53E2937961D004D41CE /* UIDevice.swift in Sources */,
 				2418E1D129365BBC004452FD /* UserTableViewCell.swift in Sources */,
 				24DC841D29360484004AAF38 /* Network+Result.swift in Sources */,
 				2418E1FB293677D5004452FD /* Alert.swift in Sources */,
+				C0A7B0010000000000000003 /* UserProfileViewController.swift in Sources */,
 				2492CC7C293E6D1E002229E8 /* SearchResultsModel.swift in Sources */,
 				24F6181229392D4D00F8BE2A /* InitialViewController.swift in Sources */,
 				2418E1ED293664C5004452FD /* MAButton.swift in Sources */,

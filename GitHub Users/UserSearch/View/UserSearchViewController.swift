@@ -255,6 +255,12 @@ final class UserSearchViewController: MAViewController {
         navigate(to: vc)
     }
 
+    private func navigateToUserProfile(_ user: UserModel) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        let vc = UserProfileViewController(username: user.login, avatarURL: user.avatar_url)
+        navigate(to: vc)
+    }
+
     // MARK: - Binding
     private func bindTableView() {
         tableView.register(cell: UserTableViewCell.self)
@@ -277,6 +283,12 @@ final class UserSearchViewController: MAViewController {
                                         onDisposed: nil)
                 .disposed(by: cell.cellBag)
         }.disposed(by: disposeBag)
+
+        tableView.rx.modelSelected(UserModel.self)
+            .subscribe(onNext: { [weak self] user in
+                self?.navigateToUserProfile(user)
+            })
+            .disposed(by: disposeBag)
         
     }
     

@@ -56,6 +56,30 @@ extension NetworkRequest {
         }
     }
 
+    // MARK: - Profile
+    func userProfile(name: String, _ completion: @escaping ResultClosure) {
+        let url = endpoint(.profile, resource: name)
+
+        request(endpoint: url, method: .get) { result in
+            result.data = UserProfileModel(result.object)
+            completion(result)
+        }
+    }
+
+    func userProfile(name: String) -> Single<UserProfileModel> {
+        return Single.create { [weak self] single in
+            self?.userProfile(name: name) { result in
+                if result.success, let profile = result.data as? UserProfileModel {
+                    single(.success(profile))
+                } else {
+                    single(.failure(result.asError()))
+                }
+            }
+
+            return Disposables.create()
+        }
+    }
+
     // MARK: - Followers/Following
     func followers(name: String, pageNumber: String, _ completion: @escaping ResultClosure) {
         let url = endpoint(.followers, resource: name)

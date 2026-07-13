@@ -44,6 +44,19 @@ extension String {
         static let refreshTitle = "Refreshing users"
     }
 
+    struct Profile {
+        static let title = "Profile"
+        static let fallbackBio = "No bio available."
+        static let publicRepos = "Repos"
+        static let followers = "Followers"
+        static let following = "Following"
+        static let company = "Company"
+        static let location = "Location"
+        static let website = "Website"
+        static let openGitHub = "Open GitHub"
+        static let unavailable = "Not available"
+    }
+
     struct Theme {
         static let menuTitle = "Theme"
         static let system = "System"

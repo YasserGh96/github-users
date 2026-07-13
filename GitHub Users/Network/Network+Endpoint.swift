@@ -16,6 +16,7 @@ enum Endpoint: String, CaseIterable {
     
     case all
     case users = "search/users"
+    case profile = "users/%@"
     case followers = "users/%@/followers"
     case following = "users/%@/following"
     
