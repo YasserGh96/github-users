@@ -13,7 +13,11 @@ target 'GitHub Users' do
     pod 'Kingfisher', '~> 6.0'
     pod 'lottie-ios'
 
-
+    target 'GitHub UsersTests' do
+      inherit! :search_paths
+      pod 'RxTest', '6.5.0'
+      pod 'RxBlocking', '6.5.0'
+    end
 end
 
 post_install do |installer|

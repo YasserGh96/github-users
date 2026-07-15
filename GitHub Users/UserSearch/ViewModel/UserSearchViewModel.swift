@@ -12,6 +12,7 @@ import RxCocoa
 final class UserSearchViewModel {
     
     // MARK: - Properties
+    private let service: GitHubUsersServicing
     private let usersRelay = BehaviorRelay<[UserModel]>(value: [])
     private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
     private let isFooterLoadingRelay = BehaviorRelay<Bool>(value: false)
@@ -34,6 +35,10 @@ final class UserSearchViewModel {
     private var userName: String = ""
     private var currentSearchDisposable: Disposable?
     private var isRequestInFlight = false
+
+    init(service: GitHubUsersServicing = api) {
+        self.service = service
+    }
 
     deinit {
         currentSearchDisposable?.dispose()
@@ -91,7 +96,7 @@ final class UserSearchViewModel {
         page = isNextPage ? page + 1 : 1
         startLoading(isNextPage: isNextPage, isRefresh: isRefresh)
 
-        currentSearchDisposable = api.searchUsers(name: trimmedName, pageNumber: String(page))
+        currentSearchDisposable = service.searchUsers(name: trimmedName, pageNumber: String(page))
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] result in
                 self?.handleSearchResult(result, query: trimmedName, shouldReset: reset)
